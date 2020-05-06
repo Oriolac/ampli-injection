@@ -1,4 +1,4 @@
 package complex;
 
-public class Injector {
+public interface Injector {
 }

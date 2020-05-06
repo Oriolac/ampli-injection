@@ -1,4 +1,4 @@
 package complex;
 
-public class Factory<E> {
+public interface Factory<E> {
 }
