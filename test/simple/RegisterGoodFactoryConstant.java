@@ -9,6 +9,7 @@ import simple.factories.FactoryB1;
 import simple.factories.FactoryC1;
 import simple.factories.FactoryD1;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegisterGoodFactoryConstant {
@@ -40,17 +41,24 @@ public class RegisterGoodFactoryConstant {
     void registerFactory() throws DependencyException {
         injector.registerFactory("B", factB1,"C");
         injector.registerFactory("A", factA1,"B","C");
-        injector.registerFactory("C", factB1,"D");
-        injector.registerFactory("C", factB1,"I");
+        injector.registerFactory("C", factC1,"D");
+        injector.registerFactory("D", factD1,"I");
         injector.registerConstant("I", VALUE);
-        Object objA = injector.getObject("A");
+        Object i = injector.getObject("I");
+        Object objD = injector.getObject("D");
+        Object objC = injector.getObject("C");
         Object objB = injector.getObject("B");
+        Object objA = injector.getObject("A");
         assertTrue(objA instanceof InterfaceA);
         assertTrue(objB instanceof InterfaceB);
         intA = (InterfaceA) objA;
         intB = (InterfaceB) objB;
-        System.out.println(intA.getA());
-        System.out.println(intB.getB());
+        intC = (InterfaceC) objC;
+        intD = (InterfaceD) objD;
+        assertEquals(4, intA.getA());
+        assertEquals(2, intB.getB());
+        assertEquals(2, intC.getC());
+        assertEquals(2, intD.getD());
     }
 
 }
