@@ -1,6 +1,9 @@
 package mock;
 
+/**
+ * InterfaceB has a dependency: InterfaceC
+ */
 public interface InterfaceB {
 
-    float getB();
+    int getB();
 }
