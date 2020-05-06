@@ -1,12 +1,18 @@
 package simple.factories;
 
 import common.DependencyException;
-import mock.ImplementationE1;
+import mock.*;
 import simple.Factory;
 
 public class FactoryE1 implements Factory {
     @Override
-    public Object create(Object... parameters) throws DependencyException {
+    public ImplementationE1 create(Object... parameters) throws DependencyException {
+        int i;
+        try {
+            i = (int) parameters[0];
+        } catch (ClassCastException | ArrayIndexOutOfBoundsException ex) {
+            throw new DependencyException(ex);
+        }
         return new ImplementationE1();
     }
 }

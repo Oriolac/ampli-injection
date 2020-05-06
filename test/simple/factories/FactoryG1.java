@@ -9,7 +9,7 @@ import simple.Factory;
 
 public class FactoryG1 implements Factory {
     @Override
-    public Object create(Object... parameters) throws DependencyException {
+    public ImplementationG1 create(Object... parameters) throws DependencyException {
         InterfaceF i;
         try {
             i = (InterfaceF) parameters[0];

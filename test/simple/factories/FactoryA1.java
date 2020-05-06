@@ -1,17 +1,14 @@
 package simple.factories;
 
 import common.DependencyException;
-import mock.ImplementationA1;
-import mock.ImplementationB1;
-import mock.InterfaceB;
-import mock.InterfaceC;
+import mock.*;
 import simple.Factory;
 
 import java.util.Optional;
 
 public class FactoryA1 implements Factory {
     @Override
-    public Object create(Object... parameters) throws DependencyException {
+    public ImplementationA1 create(Object... parameters) throws DependencyException {
         Optional<InterfaceB> intB = Optional.empty();
         Optional<InterfaceC> intC = Optional.empty();
         try {

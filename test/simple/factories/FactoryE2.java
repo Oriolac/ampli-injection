@@ -6,7 +6,7 @@ import simple.Factory;
 
 public class FactoryE2 implements Factory {
     @Override
-    public Object create(Object... parameters) throws DependencyException {
+    public ImplementationE2 create(Object... parameters) throws DependencyException {
         InterfaceE i;
         try {
             i = (InterfaceE) parameters[0];
