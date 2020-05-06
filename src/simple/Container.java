@@ -44,51 +44,51 @@ public class Container implements Injector {
             throw new DependencyException("Given name is not registered in the injector.");
         if (objectInDependencyCycle(name))
             throw new DependencyException("The given name class is in cycle of dependencies.");
-        if (!hasAllDependenciesRegistered(name))
+        if (hasAnyDependenciesUnregistered(name))
             throw new DependencyException("The given name class has not all de the dependencies registered.");
         if (instances.containsKey(name))
             return instances.get(name);
         return factories.get(name).create(getObjects(dependencies.get(name)));
     }
 
-    private List<Object> getObjects(List<String> deps) throws DependencyException {
+    private Object[] getObjects(List<String> deps) throws DependencyException {
         List<Object> res = new LinkedList<>();
         for (String dep: deps) {
             if (instances.containsKey(dep))
                 res.add(instances.get(dep));
             else
-                res.add(factories.get(dep).create(dependencies.get(dep)));
+                res.add(factories.get(dep).create(getObjects(dependencies.get(dep))));
         }
-        return res;
+        return res.toArray();
     }
 
     private boolean objectInDependencyCycle(String name) {
         Set<String> visited = new HashSet<>();
-        Stack<String> search = new Stack<>();
-        search.push(name);
+        Queue<String> search = new PriorityQueue<>();
+        search.add(name);
         while (!search.isEmpty()) {
-            String currentName = search.pop();
+            String currentName = search.remove();
             if (visited.contains(currentName))
                 return true;
-            for (String dep : dependencies.getOrDefault(currentName, Collections.emptyList()))
-                search.push(dep);
+            for (String dep : dependencies.getOrDefault(currentName, Collections.emptyList())) {
+                if (!search.contains(dep))
+                    search.add(dep);
+            }
             visited.add(currentName);
         }
         return false;
     }
 
-    private boolean hasAllDependenciesRegistered(String name) {
+    private boolean hasAnyDependenciesUnregistered(String name) {
         for (String dep : dependencies.getOrDefault(name, Collections.emptyList())) {
             if (factories.containsKey(dep)) {
-                if (!hasAllDependenciesRegistered(dep))
-                    return false;
+                if (hasAnyDependenciesUnregistered(dep))
+                    return true;
             } else if (!instances.containsKey(dep)) {
-                return false;
-            } else {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
 }
