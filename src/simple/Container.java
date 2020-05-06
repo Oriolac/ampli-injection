@@ -2,16 +2,8 @@ package simple;
 
 import common.DependencyException;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.logging.Handler;
 
 public class Container implements Injector {
 
@@ -66,7 +58,6 @@ public class Container implements Injector {
     }
 
     private boolean objectInDependencyCycle(String name) {
-
         return true;
     }
 
