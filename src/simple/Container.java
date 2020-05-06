@@ -3,11 +3,14 @@ package simple;
 import common.DependencyException;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Container implements Injector{
 
-    HashMap<String, Object> factory = new HashMap<>();
 
+    HashMap<String, Object> instances = new HashMap<>();
+    HashMap<String, Factory> factory = new HashMap<>();
+    HashMap<String, List<String>> dependencies = new HashMap<>();
 
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
