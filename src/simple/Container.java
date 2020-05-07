@@ -8,14 +8,15 @@ import java.util.function.Supplier;
 public class Container implements Injector {
 
     HashMap<String, Supplier<Object>> objects = new HashMap<>();
-    HashMap<String, Set<String>> dependencies = new HashMap<String, Set<String>>();
-
+    HashMap<String, List<String>> dependencies = new HashMap<>();
+    HashSet<String> instancies = new HashSet<>();
 
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Constant name is already in registered in the injector.");
         objects.put(name, () -> value);
+        instancies.add(name);
     }
 
     private boolean isAlreadyRegistered(String name) {
@@ -28,51 +29,76 @@ public class Container implements Injector {
             throw new DependencyException("Factory name is already in registered in the injector.");
         objects.put(name, () -> {
             try {
-                return creator.create(dependencies.get(name));
+                return creator.create(getObjects(parameters));
             } catch (DependencyException e) {
                 e.printStackTrace();
             }
             return null;
         });
-        for (String param : parameters) {
-            if (!dependencies.containsKey(param))
-                dependencies.put(param, new HashSet<>());
-            dependencies.get(param).add(name);
-        }
+        dependencies.put(name, List.of(parameters));
     }
 
     @Override
     public void registerSingleton(String name, Factory creator, String... parameters) throws DependencyException {
         registerFactory(name, creator, parameters);
+        instancies.add(name);
     }
+
 
     @Override
     public Object getObject(String name) throws DependencyException {
         if (!isAlreadyRegistered(name))
             throw new DependencyException("Given name is not registered in the injector.");
-        if (!objectInDependencyCycle(name))
+        if (objectInDependencyCycle(name))
             throw new DependencyException("The given name class is in cycle of dependencies.");
-        if (!hasAllDependenciesRegistered(name))
+        if (hasAnyDependenciesUnregistered(name))
             throw new DependencyException("The given name class has not all de the dependencies registered.");
+        if (instancies.contains(name)) {
+            Object obj = objects.get(name).get();
+            objects.put(name, () -> obj);
+        }
         return objects.get(name).get();
     }
 
-    private boolean objectInDependencyCycle(String name) {
-        return true;
+    private Object[] getObjects(String... deps) throws DependencyException {
+        List<Object> res = new LinkedList<>();
+        for (String dep : deps) {
+            if (objects.containsKey(dep))
+                res.add(objects.get(dep).get());
+            else
+                throw new DependencyException("Dependency " + dep + " not registered yet.");
+        }
+        return res.toArray();
     }
 
-    private boolean hasAllDependenciesRegistered(String name) {
-        for (String dep : dependencies.getOrDefault(name, Collections.emptySet())) {
-            if (objects.containsKey(dep)) {
-                if (!hasAllDependenciesRegistered(dep))
-                    return false;
-            } else if (!objects.containsKey(dep)) {
-                return false;
-            } else {
-                return false;
+    private boolean objectInDependencyCycle(String name) {
+        Set<String> visited = new HashSet<>();
+        Queue<String> search = new PriorityQueue<>();
+        search.add(name);
+        while (!search.isEmpty()) {
+            String currentName = search.remove();
+            if (visited.contains(currentName))
+                return true;
+            for (String dep : dependencies.getOrDefault(currentName, Collections.emptyList())) {
+                if (!search.contains(dep))
+                    search.add(dep);
             }
+            visited.add(currentName);
         }
-        return true;
+        return false;
+    }
+
+    private boolean hasAnyDependenciesUnregistered(String name) throws DependencyException {
+        for (String dep : dependencies.getOrDefault(name, Collections.emptyList())) {
+            if (!objects.containsKey(dep) && instancies.contains(dep)) {
+                return true;
+            } else if (objects.containsKey(dep)) {
+                if (hasAnyDependenciesUnregistered(dep))
+                    return true;
+            } else
+                throw new DependencyException("Dependency " + dep + " not registered yet.");
+        }
+        return false;
     }
 
 }

@@ -1,65 +1,58 @@
 package simple;
 
 import common.DependencyException;
+import mock.ImplementationD1;
+import mock.InterfaceD;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RegisterConstantTest {
 
     Injector injector;
+    final int VALUE = 42;
+    ImplementationD1 d;
 
     @BeforeEach
     void setUp() {
         injector = new Container();
+        d = new ImplementationD1(VALUE);
     }
 
     @Test
-    void registerConstant() throws DependencyException {
-        injector.registerConstant("I", 42);
+    void registerIntegerConstant() throws DependencyException {
+        injector.registerConstant("I", VALUE);
         Object objectReceived = injector.getObject("I");
         assertTrue(objectReceived instanceof Integer);
         int i = (int) objectReceived;
-        assertEquals(42, i);
+        assertEquals(VALUE, i);
     }
-/*
+
+
     @Test
-    void dependencyException() {
-        assertThrows(DependencyException.class, () ->)
-    }*/
-
-    interface InterfaceD {
-        int getI();
+    void registerInterfaceConstant() throws DependencyException {
+        injector.registerConstant("I", d);
+        Object objectReceived = injector.getObject("I");
+        assertTrue(objectReceived instanceof InterfaceD);
+        assertTrue(objectReceived instanceof ImplementationD1);
+        mock.InterfaceD intD = (mock.InterfaceD) objectReceived;
+        assertEquals(VALUE, intD.getD());
     }
 
-    static class ImplementationD1 implements InterfaceD {
-
-        private final int i;
-
-        public ImplementationD1(int i) {
-            this.i = i;
-        }
-
-        @Override
-        public int getI() {
-            return i;
-        }
+    @Test
+    void gettingUnexpectedConstantDependencyException() throws DependencyException {
+        assertThrows(DependencyException.class, () -> injector.getObject("A"));
+        injector.registerConstant("I", VALUE);
+        assertThrows(DependencyException.class, () -> injector.getObject("A"));
     }
 
-    static class FactoryD1 implements Factory {
-
-        @Override
-        public InterfaceD create(Object... parameters) throws DependencyException {
-            int i;
-            try {
-                i = (int) parameters[0];
-            } catch (ClassCastException | ArrayIndexOutOfBoundsException ex) {
-                throw new DependencyException(ex);
-            }
-            return new ImplementationD1(i);
-        }
+    @Test
+    void duplicateRegisterDependencyException() throws DependencyException {
+        injector.registerConstant("I", VALUE);
+        assertThrows(DependencyException.class, () -> injector.registerConstant("I", VALUE));
+        assertThrows(DependencyException.class, () -> injector.registerConstant("I", d));
     }
+
 
 }
