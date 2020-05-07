@@ -1,4 +1,4 @@
-package mock;
+package mock.interfaces;
 
 /**
  * InterfaceE can have a dependency: InterfaceE or Integer

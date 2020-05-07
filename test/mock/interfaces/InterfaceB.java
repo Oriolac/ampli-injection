@@ -1,4 +1,4 @@
-package mock;
+package mock.interfaces;
 
 /**
  * InterfaceB has a dependency: InterfaceC

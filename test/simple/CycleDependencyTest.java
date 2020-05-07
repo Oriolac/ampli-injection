@@ -1,9 +1,12 @@
 package simple;
 
 import common.DependencyException;
+import mock.factories.simple.FactoryE2;
+import mock.factories.simple.FactoryF1;
+import mock.factories.simple.FactoryG1;
+import mock.factories.simple.FactoryH1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import simple.factories.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

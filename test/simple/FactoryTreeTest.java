@@ -1,14 +1,14 @@
 package simple;
 
 import common.DependencyException;
-import mock.*;
+import mock.factories.simple.*;
+import mock.interfaces.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import simple.factories.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RegisterFactoryConstant {
+public class FactoryTreeTest {
 
 
     Injector injector;

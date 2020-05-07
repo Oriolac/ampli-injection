@@ -1,4 +1,8 @@
-package mock;
+package mock.implementations;
+
+import mock.interfaces.InterfaceA;
+import mock.interfaces.InterfaceB;
+import mock.interfaces.InterfaceC;
 
 public class ImplementationA1 implements InterfaceA {
     private final int a;

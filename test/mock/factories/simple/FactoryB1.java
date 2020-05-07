@@ -1,9 +1,8 @@
-package simple.factories;
+package mock.factories.simple;
 
 import common.DependencyException;
-import mock.ImplementationB1;
-import mock.InterfaceB;
-import mock.InterfaceC;
+import mock.implementations.ImplementationB1;
+import mock.interfaces.InterfaceC;
 import simple.Factory;
 
 public class FactoryB1 implements Factory {

@@ -1,4 +1,7 @@
-package mock;
+package mock.implementations;
+
+import mock.interfaces.InterfaceF;
+import mock.interfaces.InterfaceH;
 
 public class ImplementationH1 implements InterfaceH {
 

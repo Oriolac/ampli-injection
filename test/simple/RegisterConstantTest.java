@@ -1,8 +1,7 @@
 package simple;
 
 import common.DependencyException;
-import mock.ImplementationD1;
-import mock.InterfaceD;
+import mock.implementations.ImplementationD1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,17 +26,6 @@ public class RegisterConstantTest {
         int i = (int) objectReceived;
         assertEquals(VALUE, i);
     }
-/*
-
-    @Test
-    void registerInterfaceConstant() throws DependencyException {
-        injector.registerConstant("I", d);
-        Object objectReceived = injector.getObject("I");
-        assertTrue(objectReceived instanceof InterfaceD);
-        assertTrue(objectReceived instanceof ImplementationD1);
-        mock.InterfaceD intD = (mock.InterfaceD) objectReceived;
-        assertEquals(VALUE, intD.getD());
-    }*/
 
     @Test
     void gettingUnexpectedConstantDependencyException() throws DependencyException {

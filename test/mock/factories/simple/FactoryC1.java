@@ -1,7 +1,9 @@
-package simple.factories;
+package mock.factories.simple;
 
 import common.DependencyException;
-import mock.*;
+import mock.implementations.ImplementationC1;
+import mock.interfaces.InterfaceD;
+import mock.interfaces.InterfaceE;
 import simple.Factory;
 
 import java.util.Optional;
