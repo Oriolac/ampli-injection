@@ -8,27 +8,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SingletonTest {
+public class SingletonTreeTest extends TreeTest {
 
-    Injector injector;
-    final int VALUE = 2;
-    Factory singlA1, factB1, factC1, factD1, factE1, factE2;
-
-    @BeforeEach
-    void setUp() {
-        injector = new Container();
-        singlA1 = new FactoryA1();
-        factB1 = new FactoryB1();
-        factC1 = new FactoryC1();
-        factD1 = new FactoryD1();
-        factE1 = new FactoryE1();
-        factE2 = new FactoryE2();
-    }
 
     @Test
     void registerFactory() throws DependencyException {
         injector.registerFactory("B", factB1, "C");
-        injector.registerSingleton("A", singlA1, "B", "C");
+        injector.registerSingleton("A", factA1, "B", "C");
         injector.registerFactory("C", factC1, "E", "D");
         injector.registerFactory("D", factD1, "E", "I");
         injector.registerFactory("E", factE1, "I");
@@ -47,5 +33,11 @@ public class SingletonTest {
         assertEquals(obj2A, objA);
         assertNotEquals(obj2B.hashCode(), objB.hashCode());
         assertNotEquals(obj2B, objB);
+    }
+
+    @Test
+    void alreadyRegisteredSingleton() throws DependencyException {
+        assertDoesNotThrow(() -> injector.registerSingleton("A", factA1, "B", "C"));
+        assertThrows(DependencyException.class, () -> injector.registerSingleton("A", factA1, "B", "C"));
     }
 }

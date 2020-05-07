@@ -35,7 +35,7 @@ public class RegisterConstantTest {
     }
 
     @Test
-    void duplicateRegisterDependencyException() throws DependencyException {
+    void alreadyRegisteredConstantException() throws DependencyException {
         injector.registerConstant("I", VALUE);
         assertThrows(DependencyException.class, () -> injector.registerConstant("I", VALUE));
         assertThrows(DependencyException.class, () -> injector.registerConstant("I", d));

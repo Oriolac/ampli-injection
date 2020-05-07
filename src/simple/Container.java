@@ -9,14 +9,13 @@ public class Container implements Injector {
 
     HashMap<String, Supplier<Object>> objects = new HashMap<>();
     HashMap<String, List<String>> dependencies = new HashMap<>();
-    HashSet<String> instancies = new HashSet<>();
+    HashSet<String> singletons = new HashSet<>();
 
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Constant name is already in registered in the injector.");
         objects.put(name, () -> value);
-        instancies.add(name);
     }
 
     private boolean isAlreadyRegistered(String name) {
@@ -31,9 +30,8 @@ public class Container implements Injector {
             try {
                 return creator.create(getObjects(parameters));
             } catch (DependencyException e) {
-                e.printStackTrace();
+                return e;
             }
-            return null;
         });
         dependencies.put(name, List.of(parameters));
     }
@@ -41,7 +39,7 @@ public class Container implements Injector {
     @Override
     public void registerSingleton(String name, Factory creator, String... parameters) throws DependencyException {
         registerFactory(name, creator, parameters);
-        instancies.add(name);
+        singletons.add(name);
     }
 
 
@@ -53,9 +51,13 @@ public class Container implements Injector {
             throw new DependencyException("The given name class is in cycle of dependencies.");
         if (hasAnyDependenciesUnregistered(name))
             throw new DependencyException("The given name class has not all de the dependencies registered.");
-        if (instancies.contains(name)) {
-            Object obj = objects.get(name).get();
+        Object obj = objects.get(name).get();
+        if (obj instanceof DependencyException) {
+            throw (DependencyException) obj;
+        }
+        if (singletons.contains(name)) {
             objects.put(name, () -> obj);
+            singletons.remove(name);
         }
         return objects.get(name).get();
     }
@@ -66,7 +68,8 @@ public class Container implements Injector {
             if (objects.containsKey(dep))
                 res.add(objects.get(dep).get());
             else
-                throw new DependencyException("Dependency " + dep + " not registered yet.");
+                throw new DependencyException("Dependency " + dep + " not registered yet. This exception" +
+                        " should never be throwned");
         }
         return res.toArray();
     }
@@ -90,13 +93,11 @@ public class Container implements Injector {
 
     private boolean hasAnyDependenciesUnregistered(String name) throws DependencyException {
         for (String dep : dependencies.getOrDefault(name, Collections.emptyList())) {
-            if (!objects.containsKey(dep) && instancies.contains(dep)) {
+            if (!objects.containsKey(dep)) {
                 return true;
-            } else if (objects.containsKey(dep)) {
-                if (hasAnyDependenciesUnregistered(dep))
-                    return true;
-            } else
-                throw new DependencyException("Dependency " + dep + " not registered yet.");
+            } else if (hasAnyDependenciesUnregistered(dep))
+                return true;
+
         }
         return false;
     }
