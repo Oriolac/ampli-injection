@@ -97,7 +97,6 @@ public class Container implements Injector {
                 return true;
             } else if (hasAnyDependenciesUnregistered(dep))
                 return true;
-
         }
         return false;
     }
