@@ -10,6 +10,7 @@ public class Container implements Injector {
     HashMap<String, Object> instances = new HashMap<>();
     HashMap<String, Factory> factories = new HashMap<>();
     HashMap<String, List<String>> dependencies = new HashMap<>();
+    Set<String> singletons = new HashSet<>();
 
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
@@ -35,7 +36,8 @@ public class Container implements Injector {
     public void registerSingleton(String name, Factory creator, String... parameters) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Factory name is already in registered in the injector.");
-
+        factories.put(name, creator);
+        singletons.add(name);
     }
 
     @Override
@@ -48,6 +50,9 @@ public class Container implements Injector {
             throw new DependencyException("The given name class has not all de the dependencies registered.");
         if (instances.containsKey(name))
             return instances.get(name);
+        if (singletons.contains(name)) {
+            // Must refactor
+        }
         return factories.get(name).create(getObjects(dependencies.get(name)));
     }
 

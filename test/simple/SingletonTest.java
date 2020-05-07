@@ -13,7 +13,6 @@ public class SingletonTest {
     @BeforeEach
     void setUp() {
         injector = new Container();
-        singlA1 = new SingletonA1();
         factB1 = new FactoryB1();
         factC1 = new FactoryC1();
         factD1 = new FactoryD1();
