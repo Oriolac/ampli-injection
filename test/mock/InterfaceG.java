@@ -1,7 +1,7 @@
 package mock;
 
 /**
- * InterfaceH has a dependency: InterfaceF
+ * InterfaceH has a dependency: InterfaceH
  */
 public interface InterfaceG {
     int getG();

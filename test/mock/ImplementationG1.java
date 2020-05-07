@@ -1,10 +1,10 @@
 package mock;
 
 public class ImplementationG1 implements InterfaceG {
-    final private int g;
+    private final int g;
 
-    public ImplementationG1(InterfaceF intF) {
-        this.g = intF.getF();
+    public ImplementationG1(InterfaceH intH) {
+        this.g = intH.getH();
 
     }
 

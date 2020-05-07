@@ -30,10 +30,12 @@ public class RegisterFactoryConstant {
     void registerFactory() throws DependencyException {
         injector.registerFactory("B", factB1, "C");
         injector.registerFactory("A", factA1, "B", "C");
-        injector.registerFactory("C", factC1, "D");
-        injector.registerFactory("D", factD1, "I");
+        injector.registerFactory("C", factC1, "E", "D");
+        injector.registerFactory("D", factD1, "E", "I");
+        injector.registerFactory("E", factE1, "I");
         injector.registerConstant("I", VALUE);
         Object i = injector.getObject("I");
+        Object objE = injector.getObject("E");
         Object objD = injector.getObject("D");
         Object objC = injector.getObject("C");
         Object objB = injector.getObject("B");
@@ -42,10 +44,12 @@ public class RegisterFactoryConstant {
         assertTrue(objB instanceof InterfaceB);
         assertTrue(objC instanceof InterfaceC);
         assertTrue(objD instanceof InterfaceD);
+        assertTrue(objE instanceof InterfaceE);
         assertEquals(4, ((InterfaceA) objA).getA());
         assertEquals(2, ((InterfaceB) objB).getB());
         assertEquals(2, ((InterfaceC) objC).getC());
         assertEquals(2, ((InterfaceD) objD).getD());
+        assertEquals(1, ((InterfaceE) objE).getE());
     }
 
     @Test

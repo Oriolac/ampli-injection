@@ -17,7 +17,6 @@ public class RegisterConstantTest {
     @BeforeEach
     void setUp() {
         injector = new Container();
-        d = new ImplementationD1(VALUE);
     }
 
     @Test
@@ -28,7 +27,7 @@ public class RegisterConstantTest {
         int i = (int) objectReceived;
         assertEquals(VALUE, i);
     }
-
+/*
 
     @Test
     void registerInterfaceConstant() throws DependencyException {
@@ -38,7 +37,7 @@ public class RegisterConstantTest {
         assertTrue(objectReceived instanceof ImplementationD1);
         mock.InterfaceD intD = (mock.InterfaceD) objectReceived;
         assertEquals(VALUE, intD.getD());
-    }
+    }*/
 
     @Test
     void gettingUnexpectedConstantDependencyException() throws DependencyException {
