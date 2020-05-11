@@ -62,7 +62,7 @@ public class Container implements Injector {
                 res.add(objects.get(dep).getInstance());
             else
                 throw new DependencyException("Dependency " + dep + " not registered yet. This exception" +
-                        " should never be throwned");
+                        " should never be thrown because it is checked before.");
         }
         return res.toArray();
     }

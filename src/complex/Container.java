@@ -1,21 +1,20 @@
 package complex;
 
 import common.DependencyException;
+import common.InterfaceExpert;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 public class Container implements Injector {
 
-    HashMap<Class<?>, Supplier<?>> objects = new HashMap<>();
-    HashMap<Class<?>, List<Class<?>>> dependencies = new HashMap<>();
-    HashSet<Class<?>> singletons = new HashSet<>();
+    HashMap<Class<?>, InterfaceExpert<?, Class<?>>> objects = new HashMap<>();
 
     @Override
     public <E> void registerConstant(Class<E> name, E value) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Constant name is already in registered in the injector.");
-        objects.put(name, () -> value);
+        objects.put(name, new InterfaceExpert<>(() -> value, Collections.emptyList()));
     }
 
     private <E> boolean isAlreadyRegistered(Class<E> name) {
@@ -24,22 +23,24 @@ public class Container implements Injector {
 
     @Override
     public <E> void registerFactory(Class<E> name, Factory<? extends E> creator, Class<?>... parameters) throws DependencyException {
+        register(name, creator, false, parameters);
+    }
+
+    private <E> void register(Class<E> name, Factory<? extends E> creator, boolean isSingleton, Class<?>... parameters) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Factory name is already in registered in the injector.");
-        objects.put(name, () -> {
+        InterfaceExpert<E, Class<?>> expert = new InterfaceExpert<>(() -> {
             try {
                 return creator.create(getObjects(parameters));
             } catch (DependencyException e) {
-                return e;
+                return null;
             }
-        });
-        dependencies.put(name, List.of(parameters));
+        }, List.of(parameters), isSingleton);
     }
 
     @Override
     public <E> void registerSingleton(Class<E> name, Factory<? extends E> creator, Class<?>... parameters) throws DependencyException {
-        registerFactory(name, creator, parameters);
-        singletons.add(name);
+        register(name, creator, true, parameters);
     }
 
     @SuppressWarnings("unchecked")
@@ -47,44 +48,43 @@ public class Container implements Injector {
     public <E> E getObject(Class<E> name) throws DependencyException {
         if (!isAlreadyRegistered(name))
             throw new DependencyException("Given name is not registered in the injector.");
+        if (hasAnyDependenciesUnregistered(name, new HashSet<>()))
+            throw new DependencyException("The given name class has not all de the dependencies registered.");
         if (objectInDependencyCycle(name))
             throw new DependencyException("The given name class is in cycle of dependencies.");
-        if (hasAnyDependenciesUnregistered(name))
-            throw new DependencyException("The given name class has not all de the dependencies registered.");
-        Object obj = objects.get(name).get();
-        if (obj instanceof DependencyException) {
-            throw (DependencyException) obj;
-        }
-        if (singletons.contains(name)) {
-            objects.put(name, () -> obj);
-            singletons.remove(name);
-        }
-        return (E) objects.get(name).get();
+        return (E) objects.get(name).getInstance();
     }
 
-    private <E> boolean hasAnyDependenciesUnregistered(Class<E> name) {
-        for (Class<?> dep : dependencies.getOrDefault(name, Collections.emptyList())) {
-            if (!objects.containsKey(dep)) {
-                return true;
-            } else if (hasAnyDependenciesUnregistered(dep))
-                return true;
+    private <E> boolean hasAnyDependenciesUnregistered(Class<E> name, Set<Class<?>> visited) {
+        visited.add(name);
+        for (Class<?> dep : objects.get(name).getDependencies()) {
+            if (!visited.contains(dep)) {
+                if (!objects.containsKey(dep)) {
+                    return true;
+                } else if (hasAnyDependenciesUnregistered(dep, visited))
+                    return true;
+            }
+
         }
         return false;
     }
 
     private <E> boolean objectInDependencyCycle(Class<E> name) {
         Set<Class<?>> visited = new HashSet<>();
-        Queue<Class<?>> search = new LinkedList<>();
-        search.add(name);
-        while (!search.isEmpty()) {
-            Class<?> currentName = search.remove();
-            if (visited.contains(currentName))
-                return true;
-            for (Class<?> dep : dependencies.getOrDefault(currentName, Collections.emptyList())) {
-                if (!search.contains(dep))
-                    search.add(dep);
+        Stack<Class<?>> stack = new Stack<>();
+        stack.add(name);
+        while (!stack.isEmpty()) {
+            Class<?> currentName = stack.peek();
+            if (!visited.contains(currentName))
+                visited.add(currentName);
+            else
+                stack.pop();
+            for (Class<?> dep : objects.get(currentName).getDependencies()) {
+                if (!visited.contains(dep) && !stack.contains(dep))
+                    stack.add(dep);
+                else if (visited.contains(dep) && stack.contains(dep))
+                    return true;
             }
-            visited.add(currentName);
         }
         return false;
 
@@ -94,10 +94,10 @@ public class Container implements Injector {
         List<Object> res = new LinkedList<>();
         for (Class<?> dep : deps) {
             if (objects.containsKey(dep))
-                res.add(objects.get(dep).get());
+                res.add(objects.get(dep).getInstance());
             else
                 throw new DependencyException("Dependency " + dep + " not registered yet. This exception" +
-                        " should never be throwned");
+                        " should never be thrown because it is checked before.");
         }
         return res.toArray();
     }
