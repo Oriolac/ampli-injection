@@ -1,4 +1,4 @@
-package common.strategies;
+package simple.strategies;
 
 import common.exceptions.DependencyException;
 import common.experts.InterfaceExpert;
@@ -15,7 +15,8 @@ public class DependencyObjects<E, T> {
         this.expert = expert;
     }
 
-    public Object[] getObjects(T... deps) throws DependencyException {
+    @SafeVarargs
+    public final Object[] getObjects(T... deps) throws DependencyException {
         List<Object> res = new LinkedList<>();
         for (T dep : deps) {
             if (expert.containsKey(dep))

@@ -1,9 +1,9 @@
-package common;
+package simple;
 
 import common.experts.InterfaceExpert;
-import common.strategies.CycleFinder;
-import common.strategies.DependencyObjects;
-import common.strategies.UnregisteredDependencies;
+import simple.strategies.CycleFinder;
+import simple.strategies.DependencyObjects;
+import simple.strategies.UnregisteredDependencies;
 
 import java.util.HashMap;
 

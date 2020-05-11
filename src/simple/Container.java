@@ -1,11 +1,7 @@
 package simple;
 
-import common.AbstractFactoryStrategies;
 import common.exceptions.DependencyException;
 import common.experts.InterfaceExpert;
-import common.strategies.CycleFinder;
-import common.strategies.DependencyObjects;
-import common.strategies.UnregisteredDependencies;
 
 import java.util.*;
 

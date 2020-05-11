@@ -1,7 +1,6 @@
-package common.strategies;
+package simple.strategies;
 
 import common.experts.InterfaceExpert;
-import common.experts.InterfaceExpertInt;
 
 import java.util.HashMap;
 import java.util.HashSet;

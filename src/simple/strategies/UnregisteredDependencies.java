@@ -1,4 +1,4 @@
-package common.strategies;
+package simple.strategies;
 
 import common.experts.InterfaceExpert;
 
