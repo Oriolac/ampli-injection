@@ -74,7 +74,7 @@ public class Container implements Injector {
 
     private <E> boolean objectInDependencyCycle(Class<E> name) {
         Set<Class<?>> visited = new HashSet<>();
-        Queue<Class<?>> search = new PriorityQueue<>();
+        Queue<Class<?>> search = new LinkedList<>();
         search.add(name);
         while (!search.isEmpty()) {
             Class<?> currentName = search.remove();

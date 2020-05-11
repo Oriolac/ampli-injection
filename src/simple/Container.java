@@ -76,17 +76,20 @@ public class Container implements Injector {
 
     private boolean objectInDependencyCycle(String name) {
         Set<String> visited = new HashSet<>();
-        Queue<String> search = new PriorityQueue<>();
-        search.add(name);
-        while (!search.isEmpty()) {
-            String currentName = search.remove();
-            if (visited.contains(currentName))
-                return true;
+        Stack<String> stack = new Stack<>();
+        stack.add(name);
+        while (!stack.isEmpty()) {
+            String currentName = stack.peek();
+            if (!visited.contains(currentName))
+                visited.add(currentName);
+            else
+                stack.pop();
             for (String dep : dependencies.getOrDefault(currentName, Collections.emptyList())) {
-                if (!search.contains(dep))
-                    search.add(dep);
+                if (!visited.contains(dep) && !stack.contains(dep))
+                    stack.add(dep);
+                else if (visited.contains(dep) && stack.contains(dep))
+                    return true;
             }
-            visited.add(currentName);
         }
         return false;
     }

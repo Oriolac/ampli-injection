@@ -13,4 +13,8 @@ public interface RegisterConstantTestInt {
     void gettingUnexpectedConstantDependencyException() throws DependencyException;
 
     void alreadyRegisteredConstantException() throws DependencyException;
+
+    void UnregisteredConstantDependencyException();
+
+
 }

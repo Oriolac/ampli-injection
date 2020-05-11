@@ -25,6 +25,7 @@ public class CycleDependencyTest implements CycleDependencyTestInt  {
         factE2 = new FactoryE2();
     }
 
+    @Override
     @Test
     public void throwsInTriangleCycleDependency() throws DependencyException {
         injector.registerFactory("F", factF1, "G");
@@ -33,6 +34,7 @@ public class CycleDependencyTest implements CycleDependencyTestInt  {
         assertThrows(DependencyException.class, () -> injector.getObject("G"));
     }
 
+    @Override
     @Test
     public void throwsInUniCycleDependency() throws DependencyException {
         injector.registerFactory("E", factE2, "E");

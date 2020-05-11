@@ -30,8 +30,11 @@ public class RegisterConstantTest implements RegisterConstantTestInt {
 
     @Test
     public void gettingUnexpectedConstantDependencyException() throws DependencyException {
-        assertThrows(DependencyException.class, () -> injector.getObject("A"));
         injector.registerConstant("I", VALUE);
+        assertThrows(DependencyException.class, () -> injector.getObject("A"));
+    }
+
+    public void UnregisteredConstantDependencyException() {
         assertThrows(DependencyException.class, () -> injector.getObject("A"));
     }
 
