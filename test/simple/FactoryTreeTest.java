@@ -2,10 +2,8 @@ package simple;
 
 import cases.CompositeTestInt;
 import cases.DependencyExceptionTestInt;
-import common.DependencyException;
-import mock.factories.simple.*;
+import common.exceptions.DependencyException;
 import mock.interfaces.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

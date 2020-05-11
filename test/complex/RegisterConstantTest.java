@@ -1,7 +1,7 @@
 package complex;
 
 import cases.RegisterConstantTestInt;
-import common.DependencyException;
+import common.exceptions.DependencyException;
 import mock.implementations.ImplementationD1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,21 +1,24 @@
 package simple;
 
-import common.DependencyException;
+import common.AbstractFactoryStrategies;
+import common.exceptions.DependencyException;
+import common.experts.InterfaceExpert;
+import common.strategies.CycleFinder;
+import common.strategies.DependencyObjects;
+import common.strategies.UnregisteredDependencies;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class Container implements Injector {
 
-    HashMap<String, Supplier<Object>> objects = new HashMap<>();
-    HashMap<String, List<String>> dependencies = new HashMap<>();
-    HashSet<String> singletons = new HashSet<>();
+    HashMap<String, InterfaceExpert<Object, String>> objects = new HashMap<>();
+    AbstractFactoryStrategies<Object, String> factoryStrategies = new AbstractFactoryStrategies<>(objects);
 
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Constant name is already in registered in the injector.");
-        objects.put(name, () -> value);
+        objects.put(name, new InterfaceExpert<>(() -> value, Collections.emptyList()));
     }
 
     private boolean isAlreadyRegistered(String name) {
@@ -26,20 +29,24 @@ public class Container implements Injector {
     public void registerFactory(String name, Factory creator, String... parameters) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Factory name is already in registered in the injector.");
-        objects.put(name, () -> {
+        register(name, creator, false, parameters);
+    }
+
+    private void register(String name, Factory creator, boolean isSingleton, String... parameters) throws DependencyException {
+        objects.put(name, new InterfaceExpert<>(() -> {
             try {
                 return creator.create(getObjects(parameters));
             } catch (DependencyException e) {
                 return e;
             }
-        });
-        dependencies.put(name, List.of(parameters));
+        }, List.of(parameters), isSingleton));
     }
 
     @Override
     public void registerSingleton(String name, Factory creator, String... parameters) throws DependencyException {
-        registerFactory(name, creator, parameters);
-        singletons.add(name);
+        if (isAlreadyRegistered(name))
+            throw new DependencyException("Factory name is already in registered in the injector.");
+        register(name, creator, true, parameters);
     }
 
 
@@ -47,61 +54,27 @@ public class Container implements Injector {
     public Object getObject(String name) throws DependencyException {
         if (!isAlreadyRegistered(name))
             throw new DependencyException("Given name is not registered in the injector.");
-        if (objectInDependencyCycle(name))
-            throw new DependencyException("The given name class is in cycle of dependencies.");
         if (hasAnyDependenciesUnregistered(name))
             throw new DependencyException("The given name class has not all de the dependencies registered.");
-        Object obj = objects.get(name).get();
-        if (obj instanceof DependencyException) {
-            throw (DependencyException) obj;
-        }
-        if (singletons.contains(name)) {
-            objects.put(name, () -> obj);
-            singletons.remove(name);
-        }
-        return objects.get(name).get();
+        if (objectInDependencyCycle(name))
+            throw new DependencyException("The given name class is in cycle of dependencies.");
+        InterfaceExpert<Object, String> expert = objects.get(name);
+        expert.setInstance();
+        if (expert.getInstance().get() instanceof DependencyException)
+            throw new DependencyException((DependencyException) expert.getInstance().get());
+        return expert.getInstance().get();
     }
 
     private Object[] getObjects(String... deps) throws DependencyException {
-        List<Object> res = new LinkedList<>();
-        for (String dep : deps) {
-            if (objects.containsKey(dep))
-                res.add(objects.get(dep).get());
-            else
-                throw new DependencyException("Dependency " + dep + " not registered yet. This exception" +
-                        " should never be throwned");
-        }
-        return res.toArray();
+        return factoryStrategies.getDepObjects().getObjects(deps);
     }
 
     private boolean objectInDependencyCycle(String name) {
-        Set<String> visited = new HashSet<>();
-        Stack<String> stack = new Stack<>();
-        stack.add(name);
-        while (!stack.isEmpty()) {
-            String currentName = stack.peek();
-            if (!visited.contains(currentName))
-                visited.add(currentName);
-            else
-                stack.pop();
-            for (String dep : dependencies.getOrDefault(currentName, Collections.emptyList())) {
-                if (!visited.contains(dep) && !stack.contains(dep))
-                    stack.add(dep);
-                else if (visited.contains(dep) && stack.contains(dep))
-                    return true;
-            }
-        }
-        return false;
+        return factoryStrategies.getCycleFinder().objectInDependencyCycle(name);
     }
 
     private boolean hasAnyDependenciesUnregistered(String name) {
-        for (String dep : dependencies.getOrDefault(name, Collections.emptyList())) {
-            if (!objects.containsKey(dep)) {
-                return true;
-            } else if (hasAnyDependenciesUnregistered(dep))
-                return true;
-        }
-        return false;
+        return factoryStrategies.getUnregistered().hasAnyDependenciesUnregistered(name,  new HashSet<>());
     }
 
 }

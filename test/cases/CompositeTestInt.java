@@ -1,8 +1,6 @@
 package cases;
 
-import common.DependencyException;
-import mock.interfaces.InterfaceE;
-import org.junit.jupiter.api.Test;
+import common.exceptions.DependencyException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
