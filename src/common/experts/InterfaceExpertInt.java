@@ -1,4 +1,6 @@
-package common;
+package common.experts;
+
+import common.exceptions.DependencyException;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -9,6 +11,6 @@ public interface InterfaceExpertInt<E, T> {
 
     boolean isSingleton();
 
-    E getInstance() throws DependencyException;
+    Supplier<E> getInstance() throws DependencyException;
 
 }

@@ -1,4 +1,6 @@
-package common;
+package common.experts;
+
+import common.exceptions.DependencyException;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -31,12 +33,7 @@ public class InterfaceExpert<E, T> implements InterfaceExpertInt<E, T> {
     }
 
     @Override
-    public E getInstance() throws DependencyException {
-        E instance = supplier.get();
-        if (instance == null)
-            throw new DependencyException("Parameters in Factory are not correct.");
-        if (this.isSingleton)
-            supplier = () -> instance;
-        return instance;
+    public Supplier<E> getInstance() throws DependencyException {
+        return supplier;
     }
 }

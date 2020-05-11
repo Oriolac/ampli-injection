@@ -1,6 +1,6 @@
 package simple;
 
-import common.DependencyException;
+import common.exceptions.DependencyException;
 
 public interface Factory {
 

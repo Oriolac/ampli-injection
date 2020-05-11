@@ -1,6 +1,6 @@
 package mock.factories.complex;
 
-import common.DependencyException;
+import common.exceptions.DependencyException;
 import complex.Factory;
 import mock.factories.AbstractSpyFactory;
 

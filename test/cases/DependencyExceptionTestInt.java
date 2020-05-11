@@ -1,7 +1,6 @@
 package cases;
 
-import common.DependencyException;
-import org.junit.jupiter.api.Test;
+import common.exceptions.DependencyException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

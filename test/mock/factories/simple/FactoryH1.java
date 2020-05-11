@@ -1,6 +1,6 @@
 package mock.factories.simple;
 
-import common.DependencyException;
+import common.exceptions.DependencyException;
 import mock.implementations.ImplementationH1;
 import mock.interfaces.InterfaceF;
 import simple.Factory;
