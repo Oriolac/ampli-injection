@@ -1,5 +1,7 @@
 package simple;
 
+import cases.CompositeTestInt;
+import cases.DependencyExceptionTestInt;
 import common.DependencyException;
 import mock.factories.simple.*;
 import mock.interfaces.*;
@@ -8,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FactoryTreeTest extends TreeTest {
+public class FactoryTreeTest extends TreeTest implements DependencyExceptionTestInt, CompositeTestInt {
 
     @Test
     void registerFactory() throws DependencyException {
@@ -37,7 +39,7 @@ public class FactoryTreeTest extends TreeTest {
     }
 
     @Test
-    void usingComposite() throws DependencyException {
+    public void usingComposite() throws DependencyException {
         injector.registerFactory("E1", factE1, "I");
         injector.registerFactory("E2", factE2, "E1");
         injector.registerConstant("I", VALUE);
@@ -52,7 +54,7 @@ public class FactoryTreeTest extends TreeTest {
     }
 
     @Test
-    void notDirectlyDependencyUnregistered() throws DependencyException {
+    public void notDirectlyDependencyUnregistered() throws DependencyException {
         injector.registerFactory("B", factB1, "C");
         injector.registerFactory("A", factA1, "B", "C");
         assertThrows(DependencyException.class, () -> injector.getObject("B"));
@@ -63,21 +65,21 @@ public class FactoryTreeTest extends TreeTest {
     }
 
     @Test
-    void directlyDependencyFactoryUnregistered() throws DependencyException {
+    public void directlyDependencyFactoryUnregistered() throws DependencyException {
         injector.registerFactory("D", factD1, "E", "I");
         injector.registerConstant("I", VALUE);
         assertThrows(DependencyException.class, () -> injector.getObject("D"));
     }
 
     @Test
-    void directlyDependencyConstantUnregistered() throws DependencyException {
+    public void directlyDependencyConstantUnregistered() throws DependencyException {
         injector.registerFactory("D", factD1, "E", "I");
         injector.registerFactory("E", factE1, "I");
         assertThrows(DependencyException.class, () -> injector.getObject("D"));
     }
 
     @Test
-    void unformedDependencyRegistration() throws DependencyException {
+    public void unformedDependencyRegistration() throws DependencyException {
         injector.registerFactory("A", factA1, "I");
         injector.registerConstant("I", VALUE);
         assertThrows(DependencyException.class, () -> injector.getObject("A"));

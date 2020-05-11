@@ -91,7 +91,7 @@ public class Container implements Injector {
         return false;
     }
 
-    private boolean hasAnyDependenciesUnregistered(String name) throws DependencyException {
+    private boolean hasAnyDependenciesUnregistered(String name) {
         for (String dep : dependencies.getOrDefault(name, Collections.emptyList())) {
             if (!objects.containsKey(dep)) {
                 return true;

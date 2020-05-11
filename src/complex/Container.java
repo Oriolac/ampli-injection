@@ -42,6 +42,7 @@ public class Container implements Injector {
         singletons.add(name);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <E> E getObject(Class<E> name) throws DependencyException {
         if (!isAlreadyRegistered(name))

@@ -1,5 +1,6 @@
 package simple;
 
+import cases.RegisterConstantTestInt;
 import common.DependencyException;
 import mock.implementations.ImplementationD1;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RegisterConstantTest {
+public class RegisterConstantTest implements RegisterConstantTestInt {
 
     Injector injector;
     final int VALUE = 42;
@@ -19,7 +20,7 @@ public class RegisterConstantTest {
     }
 
     @Test
-    void registerIntegerConstant() throws DependencyException {
+    public void registerIntegerConstant() throws DependencyException {
         injector.registerConstant("I", VALUE);
         Object objectReceived = injector.getObject("I");
         assertTrue(objectReceived instanceof Integer);
@@ -28,14 +29,14 @@ public class RegisterConstantTest {
     }
 
     @Test
-    void gettingUnexpectedConstantDependencyException() throws DependencyException {
+    public void gettingUnexpectedConstantDependencyException() throws DependencyException {
         assertThrows(DependencyException.class, () -> injector.getObject("A"));
         injector.registerConstant("I", VALUE);
         assertThrows(DependencyException.class, () -> injector.getObject("A"));
     }
 
     @Test
-    void alreadyRegisteredConstantException() throws DependencyException {
+    public void alreadyRegisteredConstantException() throws DependencyException {
         injector.registerConstant("I", VALUE);
         assertThrows(DependencyException.class, () -> injector.registerConstant("I", VALUE));
         assertThrows(DependencyException.class, () -> injector.registerConstant("I", d));

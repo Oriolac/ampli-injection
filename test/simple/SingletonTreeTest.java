@@ -1,5 +1,6 @@
 package simple;
 
+import cases.SingletonTreeTestInt;
 import common.DependencyException;
 import mock.factories.simple.*;
 import mock.interfaces.*;
@@ -8,11 +9,28 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SingletonTreeTest extends TreeTest {
+public class SingletonTreeTest extends TreeTest implements SingletonTreeTestInt {
 
 
     @Test
-    void registerFactory() throws DependencyException {
+    public void hasSingletonObjectSameHashCode() throws DependencyException {
+        injector.registerSingleton("D", factD1, "E", "I");
+        injector.registerFactory("E", factE1, "I");
+        injector.registerConstant("I", VALUE);
+        Object objD = injector.getObject("D");
+        Object objE = injector.getObject("E");
+        assertTrue(objD instanceof InterfaceD);
+        assertTrue(objE instanceof InterfaceE);
+        Object obj2D = injector.getObject("D");
+        Object obj2E = injector.getObject("E");
+        assertTrue(obj2D instanceof InterfaceD);
+        assertTrue(obj2E instanceof InterfaceE);
+        assertEquals(obj2D.hashCode(), objD.hashCode());
+        assertNotEquals(obj2E.hashCode(), objE.hashCode());
+    }
+
+    @Test
+    public void registerFactory() throws DependencyException {
         injector.registerFactory("B", factB1, "C");
         injector.registerSingleton("A", factA1, "B", "C");
         injector.registerFactory("C", factC1, "E", "D");
@@ -25,18 +43,10 @@ public class SingletonTreeTest extends TreeTest {
         assertTrue(objB instanceof InterfaceB);
         assertEquals(4, ((InterfaceA) objA).getA());
         assertEquals(2, ((InterfaceB) objB).getB());
-        Object obj2B = injector.getObject("B");
-        Object obj2A = injector.getObject("A");
-        assertTrue(obj2A instanceof InterfaceA);
-        assertTrue(obj2B instanceof InterfaceB);
-        assertEquals(obj2A.hashCode(), objA.hashCode());
-        assertEquals(obj2A, objA);
-        assertNotEquals(obj2B.hashCode(), objB.hashCode());
-        assertNotEquals(obj2B, objB);
     }
 
     @Test
-    void alreadyRegisteredSingleton() throws DependencyException {
+    public void alreadyRegisteredSingleton() throws DependencyException {
         assertDoesNotThrow(() -> injector.registerSingleton("A", factA1, "B", "C"));
         assertThrows(DependencyException.class, () -> injector.registerSingleton("A", factA1, "B", "C"));
     }
