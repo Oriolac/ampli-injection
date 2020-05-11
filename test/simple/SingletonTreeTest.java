@@ -41,8 +41,8 @@ public class SingletonTreeTest extends TreeTest implements SingletonTreeTestInt 
         Object objA = injector.getObject("A");
         assertTrue(objA instanceof InterfaceA);
         assertTrue(objB instanceof InterfaceB);
-        assertEquals(4, ((InterfaceA) objA).getA());
-        assertEquals(2, ((InterfaceB) objB).getB());
+        assertEquals(64, ((InterfaceA) objA).getA());
+        assertEquals(8, ((InterfaceB) objB).getB());
     }
 
     @Test
