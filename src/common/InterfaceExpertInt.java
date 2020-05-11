@@ -9,6 +9,6 @@ public interface InterfaceExpertInt<E, T> {
 
     boolean isSingleton();
 
-    Supplier<E> getInstance();
+    E getInstance() throws DependencyException;
 
 }
