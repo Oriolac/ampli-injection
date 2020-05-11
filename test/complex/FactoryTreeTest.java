@@ -40,6 +40,7 @@ public class FactoryTreeTest extends TreeTest implements DependencyExceptionTest
     }
 
     @Override
+    @Test
     public void notDirectlyDependencyUnregistered() throws DependencyException {
         injector.registerFactory(InterfaceB.class, factB1, InterfaceC.class);
         injector.registerFactory(InterfaceA.class, factA1, InterfaceB.class, InterfaceC.class);
@@ -51,6 +52,7 @@ public class FactoryTreeTest extends TreeTest implements DependencyExceptionTest
     }
 
     @Override
+    @Test
     public void directlyDependencyFactoryUnregistered() throws DependencyException {
         injector.registerFactory(InterfaceD.class, factD1, InterfaceE.class, Integer.class);
         injector.registerConstant(Integer.class, VALUE);
@@ -58,6 +60,7 @@ public class FactoryTreeTest extends TreeTest implements DependencyExceptionTest
     }
 
     @Override
+    @Test
     public void directlyDependencyConstantUnregistered() throws DependencyException {
         injector.registerFactory(InterfaceD.class, factD1, InterfaceE.class, Integer.class);
         injector.registerFactory(InterfaceE.class, factE1, Integer.class);
@@ -65,6 +68,7 @@ public class FactoryTreeTest extends TreeTest implements DependencyExceptionTest
     }
 
     @Override
+    @Test
     public void unformedDependencyRegistration() throws DependencyException {
         injector.registerFactory(InterfaceA.class, factA1, Integer.class);
         injector.registerConstant(Integer.class, VALUE);

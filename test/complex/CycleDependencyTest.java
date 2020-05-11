@@ -19,12 +19,6 @@ public class CycleDependencyTest implements CycleDependencyTestInt  {
     FactoryE2 factE2;
     FactoryA1 factA1;
 
-    final Class<ImplementationF1> impF = ImplementationF1.class;
-    final Class<ImplementationG1> impG = ImplementationG1.class;
-    final Class<ImplementationH1> impH = ImplementationH1.class;
-    final Class<ImplementationE2> impE = ImplementationE2.class;
-
-
     @BeforeEach
     public void setUp() {
         injector = new Container();
@@ -38,17 +32,17 @@ public class CycleDependencyTest implements CycleDependencyTestInt  {
     @Override
     @Test
     public void throwsInTriangleCycleDependency() throws DependencyException {
-        injector.registerFactory(InterfaceF.class, factF1, impG);
-        injector.registerFactory(InterfaceG.class, factG1, impH);
-        injector.registerFactory(InterfaceH.class, factH1, impF);
-        assertThrows(DependencyException.class, () -> injector.getObject(impG));
+        injector.registerFactory(InterfaceF.class, factF1, InterfaceG.class);
+        injector.registerFactory(InterfaceG.class, factG1, InterfaceH.class);
+        injector.registerFactory(InterfaceH.class, factH1, InterfaceF.class);
+        assertThrows(DependencyException.class, () -> injector.getObject(InterfaceG.class));
     }
 
     @Override
     @Test
     public void throwsInUniCycleDependency() throws DependencyException {
-        injector.registerFactory(SuperInterface.class, factE2, impE);
-        assertThrows(DependencyException.class, () -> injector.getObject(impE));
+        injector.registerFactory(InterfaceE.class, factE2, InterfaceE.class);
+        assertThrows(DependencyException.class, () -> injector.getObject(InterfaceE.class));
 
     }
 

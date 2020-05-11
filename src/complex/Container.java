@@ -55,8 +55,8 @@ public class Container implements Injector {
             throw new DependencyException("The given name class is in cycle of dependencies.");
         InterfaceExpert<?, Class<?>> expert = objects.get(name);
         expert.setInstance();
-        if (expert.getInstance().get() instanceof DependencyException)
-            throw new DependencyException((DependencyException) expert.getInstance().get());
+        if (expert.getInstance().get() == null)
+            throw new DependencyException("ClassCastException or ArrayIndexOutOfBoundsException exception");
         return (E) expert.getInstance().get();
     }
 
