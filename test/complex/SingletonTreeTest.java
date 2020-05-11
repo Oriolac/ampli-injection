@@ -44,7 +44,7 @@ public class SingletonTreeTest extends TreeTest implements SingletonTreeTestInt 
         injector.registerFactory(SuperInterface.class, factC1, InterfaceE.class, InterfaceD.class);
         injector.registerFactory(SuperInterface.class, factD1, InterfaceE.class);
         injector.registerFactory(SuperInterface.class, factE1, InterfaceE.class);
-        //injector.registerConstant(.class, VALUE);
+        //injector.registerConstant(class, VALUE);
         Object objB = injector.getObject(InterfaceB.class);
         Object objA = injector.getObject(InterfaceA.class);
         assertTrue(objA instanceof InterfaceA);
