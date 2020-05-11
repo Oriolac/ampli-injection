@@ -31,11 +31,11 @@ public class FactoryTreeTest extends TreeTest implements DependencyExceptionTest
         assertTrue(objC instanceof InterfaceC);
         assertTrue(objD instanceof InterfaceD);
         assertTrue(objE instanceof InterfaceE);
-        assertEquals(4, ((InterfaceA) objA).getA());
-        assertEquals(2, ((InterfaceB) objB).getB());
-        assertEquals(2, ((InterfaceC) objC).getC());
-        assertEquals(2, ((InterfaceD) objD).getD());
-        assertEquals(1, ((InterfaceE) objE).getE());
+        assertEquals(64, ((InterfaceA) objA).getA());
+        assertEquals(8, ((InterfaceB) objB).getB());
+        assertEquals(8, ((InterfaceC) objC).getC());
+        assertEquals(4, ((InterfaceD) objD).getD());
+        assertEquals(2, ((InterfaceE) objE).getE());
     }
 
     @Test
@@ -49,8 +49,8 @@ public class FactoryTreeTest extends TreeTest implements DependencyExceptionTest
         obj = injector.getObject("E2");
         assertTrue(obj instanceof InterfaceE);
         InterfaceE intE2 = (InterfaceE) obj;
-        assertEquals(1, intE1.getE());
-        assertEquals(2, intE2.getE());
+        assertEquals(2, intE1.getE());
+        assertEquals(3, intE2.getE());
     }
 
     @Test

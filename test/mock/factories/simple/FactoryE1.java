@@ -13,6 +13,6 @@ public class FactoryE1 implements Factory {
         } catch (ClassCastException | ArrayIndexOutOfBoundsException ex) {
             throw new DependencyException(ex);
         }
-        return new ImplementationE1();
+        return new ImplementationE1(i);
     }
 }
