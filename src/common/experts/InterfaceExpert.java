@@ -5,7 +5,7 @@ import common.exceptions.DependencyException;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class InterfaceExpert<E, T> implements InterfaceExpertInt<E, T> {
+public class InterfaceExpert<E, T> implements InterfaceExpertInt {
 
 
     private Supplier<E> supplier;
@@ -35,5 +35,10 @@ public class InterfaceExpert<E, T> implements InterfaceExpertInt<E, T> {
     @Override
     public Supplier<E> getInstance() throws DependencyException {
         return supplier;
+    }
+
+    public void set(Supplier<E> newSupplier) {
+        if (isSingleton)
+            supplier = newSupplier;
     }
 }

@@ -33,12 +33,11 @@ public class Container implements Injector {
     }
 
     private void register(String name, Factory creator, boolean isSingleton, String... parameters) throws DependencyException {
-
         objects.put(name, new InterfaceExpert<>(() -> {
             try {
                 return creator.create(getObjects(parameters));
             } catch (DependencyException e) {
-                return null;
+                return e;
             }
         }, List.of(parameters), isSingleton));
     }
@@ -59,7 +58,14 @@ public class Container implements Injector {
             throw new DependencyException("The given name class has not all de the dependencies registered.");
         if (objectInDependencyCycle(name))
             throw new DependencyException("The given name class is in cycle of dependencies.");
-        return objects.get(name).getInstance();
+        InterfaceExpert<Object, String> expert = objects.get(name);
+        if (expert.isSingleton()) {
+            Object obj = expert.getInstance().get();
+            expert.set(() -> obj);
+        }
+        if (expert.getInstance().get() instanceof DependencyException)
+            throw new DependencyException((DependencyException) expert.getInstance().get());
+        return expert.getInstance().get();
     }
 
     private Object[] getObjects(String... deps) throws DependencyException {

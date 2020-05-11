@@ -1,23 +1,19 @@
 package complex;
 
-import common.AbstractFactoryStrategies;
 import common.exceptions.DependencyException;
-import common.experts.ComplexInterfaceExpert;
 import common.experts.InterfaceExpert;
-import common.strategies.CycleFinder;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class Container implements Injector {
 
-    HashMap<Class<?>, ComplexInterfaceExpert> objects = new HashMap<>();
+    HashMap<Class<?>, InterfaceExpert<?, Class<?>>> objects = new HashMap<>();
 
     @Override
     public <E> void registerConstant(Class<E> name, E value) throws DependencyException {
         if (isAlreadyRegistered(name))
             throw new DependencyException("Constant name is already in registered in the injector.");
-        objects.put(name, new ComplexInterfaceExpert(new InterfaceExpert<>(() -> value, Collections.emptyList())));
+        objects.put(name, new InterfaceExpert<>(() -> value, Collections.emptyList()));
     }
 
     private <E> boolean isAlreadyRegistered(Class<E> name) {
@@ -39,6 +35,7 @@ public class Container implements Injector {
                 return null;
             }
         }, List.of(parameters), isSingleton);
+        objects.put(name, expert);
     }
 
     @Override
@@ -90,7 +87,6 @@ public class Container implements Injector {
             }
         }
         return false;
-
     }
 
     private Object[] getObjects(Class<?>... deps) throws DependencyException {

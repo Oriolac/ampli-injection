@@ -19,7 +19,7 @@ public class DependencyObjects<E, T> {
         List<Object> res = new LinkedList<>();
         for (T dep : deps) {
             if (expert.containsKey(dep))
-                res.add(expert.get(dep).getInstance());
+                res.add(expert.get(dep).getInstance().get());
             else
                 throw new DependencyException("Dependency " + dep + " not registered yet. This exception" +
                         " should never be thrown because it is checked before.");
