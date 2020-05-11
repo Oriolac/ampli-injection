@@ -1,13 +1,7 @@
 package cases;
 
-import common.DependencyException;
-import mock.interfaces.InterfaceA;
-import mock.interfaces.InterfaceB;
-import mock.interfaces.InterfaceD;
-import mock.interfaces.InterfaceE;
-import org.junit.jupiter.api.Test;
+import common.exceptions.DependencyException;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public interface SingletonTreeTestInt {

@@ -1,10 +1,8 @@
 package simple;
 
 import cases.SingletonTreeTestInt;
-import common.DependencyException;
-import mock.factories.simple.*;
+import common.exceptions.DependencyException;
 import mock.interfaces.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

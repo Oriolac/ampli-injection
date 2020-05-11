@@ -1,7 +1,7 @@
 package simple;
 
 import cases.CycleDependencyTestInt;
-import common.DependencyException;
+import common.exceptions.DependencyException;
 import mock.factories.simple.FactoryE2;
 import mock.factories.simple.FactoryF1;
 import mock.factories.simple.FactoryG1;

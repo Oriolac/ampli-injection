@@ -11,11 +11,14 @@ public abstract class TreeTest {
 
     Injector injector;
     final int VALUE = 2;
-    Factory factA1, factB1, factC1, factD1, factE1, factE2;
-    Factory<InterfaceA> factF1;
-    Factory<InterfaceG> factG1;
-    Factory<InterfaceH> factH1;
-    Factory<InterfaceE> factE2;
+
+    FactoryA1 factA1;
+    FactoryB1 factB1;
+    FactoryC1 factC1;
+    FactoryD1 factD1;
+    FactoryE1 factE1;
+    FactoryE2 factE2;
+
     @BeforeEach
     void setUp() {
         injector = new Container();

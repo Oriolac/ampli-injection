@@ -1,11 +1,8 @@
 package complex;
 
 import cases.CycleDependencyTestInt;
-import common.DependencyException;
-import mock.factories.complex.FactoryE2;
-import mock.factories.complex.FactoryF1;
-import mock.factories.complex.FactoryG1;
-import mock.factories.complex.FactoryH1;
+import common.exceptions.DependencyException;
+import mock.factories.complex.*;
 import mock.implementations.*;
 import mock.interfaces.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CycleDependencyTest implements CycleDependencyTestInt  {
 
     Injector injector;
-    Factory<InterfaceF> factF1;
-    Factory<InterfaceG> factG1;
-    Factory<InterfaceH> factH1;
-    Factory<InterfaceE> factE2;
+    FactoryF1 factF1;
+    FactoryG1 factG1;
+    FactoryH1 factH1;
+    FactoryE2 factE2;
+    FactoryA1 factA1;
 
     final Class<ImplementationF1> impF = ImplementationF1.class;
     final Class<ImplementationG1> impG = ImplementationG1.class;
@@ -30,10 +28,11 @@ public class CycleDependencyTest implements CycleDependencyTestInt  {
     @BeforeEach
     public void setUp() {
         injector = new Container();
-        factF1 = new FactoryF1<>();
-        factG1 = new FactoryG1<>();
-        factH1 = new FactoryH1<>();
-        factE2 = new FactoryE2<>();
+        factA1 = new FactoryA1();
+        factF1 = new FactoryF1();
+        factG1 = new FactoryG1();
+        factH1 = new FactoryH1();
+        factE2 = new FactoryE2();
     }
 
     @Override
@@ -50,6 +49,7 @@ public class CycleDependencyTest implements CycleDependencyTestInt  {
     public void throwsInUniCycleDependency() throws DependencyException {
         injector.registerFactory(SuperInterface.class, factE2, impE);
         assertThrows(DependencyException.class, () -> injector.getObject(impE));
+
     }
 
 }
