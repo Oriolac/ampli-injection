@@ -59,10 +59,7 @@ public class Container implements Injector {
         if (objectInDependencyCycle(name))
             throw new DependencyException("The given name class is in cycle of dependencies.");
         InterfaceExpert<Object, String> expert = objects.get(name);
-        if (expert.isSingleton()) {
-            Object obj = expert.getInstance().get();
-            expert.set(() -> obj);
-        }
+        expert.setInstance();
         if (expert.getInstance().get() instanceof DependencyException)
             throw new DependencyException((DependencyException) expert.getInstance().get());
         return expert.getInstance().get();

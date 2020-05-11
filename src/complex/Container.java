@@ -1,5 +1,6 @@
 package complex;
 
+import common.AbstractFactoryStrategies;
 import common.exceptions.DependencyException;
 import common.experts.InterfaceExpert;
 
@@ -8,6 +9,7 @@ import java.util.*;
 public class Container implements Injector {
 
     HashMap<Class<?>, InterfaceExpert<?, Class<?>>> objects = new HashMap<>();
+
 
     @Override
     public <E> void registerConstant(Class<E> name, E value) throws DependencyException {
@@ -43,7 +45,7 @@ public class Container implements Injector {
         register(name, creator, true, parameters);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     @Override
     public <E> E getObject(Class<E> name) throws DependencyException {
         if (!isAlreadyRegistered(name))
@@ -52,7 +54,11 @@ public class Container implements Injector {
             throw new DependencyException("The given name class has not all de the dependencies registered.");
         if (objectInDependencyCycle(name))
             throw new DependencyException("The given name class is in cycle of dependencies.");
-        return (E) objects.get(name).getInstance();
+        InterfaceExpert<?, Class<?>> expert = objects.get(name);
+        expert.setInstance();
+        if (expert.getInstance().get() instanceof DependencyException)
+            throw new DependencyException((DependencyException) expert.getInstance().get());
+        return (E) expert.getInstance().get();
     }
 
     private <E> boolean hasAnyDependenciesUnregistered(Class<E> name, Set<Class<?>> visited) {
@@ -93,7 +99,7 @@ public class Container implements Injector {
         List<Object> res = new LinkedList<>();
         for (Class<?> dep : deps) {
             if (objects.containsKey(dep))
-                res.add(objects.get(dep).getInstance());
+                res.add(objects.get(dep).getInstance().get());
             else
                 throw new DependencyException("Dependency " + dep + " not registered yet. This exception" +
                         " should never be thrown because it is checked before.");

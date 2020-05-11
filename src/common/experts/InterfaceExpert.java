@@ -37,8 +37,10 @@ public class InterfaceExpert<E, T> implements InterfaceExpertInt {
         return supplier;
     }
 
-    public void set(Supplier<E> newSupplier) {
-        if (isSingleton)
-            supplier = newSupplier;
+    public void setInstance() {
+        if (isSingleton){
+            E elem = supplier.get();
+            supplier = () -> elem;
+        }
     }
 }
