@@ -30,7 +30,7 @@ public class CycleDependencyTest implements CycleDependencyTestInt  {
     public void throwsInTriangleCycleDependency() throws DependencyException {
         injector.registerFactory("F", factF1, "G");
         injector.registerFactory("G", factG1, "H");
-        injector.registerFactory("H", factH1, "G");
+        injector.registerFactory("H", factH1, "F");
         assertThrows(DependencyException.class, () -> injector.getObject("G"));
     }
 
